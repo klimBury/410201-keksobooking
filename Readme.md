@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
-* Студент: [Неопознанный енот](https://up.htmlacademy.ru/javascript/10/user/410201).
-* Наставник: `Неизвестно`.
+* Студент: [Клим Бурый](https://up.htmlacademy.ru/javascript/10/user/410201).
+* Наставник: [Игорь Антонов](https://htmlacademy.ru/profile/antonov).
 
 ---
 
