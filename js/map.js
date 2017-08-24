@@ -35,14 +35,14 @@ var featuresArray = [
   'conditioner'
 ];
 var AD_TEMPLATE_AMOUNT = 8;
-var FEATURES_ARRAY_LENGTH = 5;
+var FEATURES_ARRAY_LENGTH = 6;
 var INDEX = Math.floor(Math.random() * (3 - 1) + 1);
 
 function getAvatarNumber() {
   return 'img/avatars/user' + avatarNumbersArray[i] + '.png';
 }
 function getTitle() {
-  var index = Math.floor(Math.random() * (titlesArray.length - 1));
+  var index = Math.floor(Math.random() * titlesArray.length);
   var titleName = titlesArray[index];
   titlesArray.splice(index, 1);
   return titleName;
