@@ -19,11 +19,11 @@ var titlesArray = [
   'Уютное бунгало далеко от моря',
   'Неуютное бунгало по колено в воде'
 ];
-var typesArray = [
-  'flat',
-  'house',
-  'bungalo'
-];
+var HOUSE_TYPE = {
+  flat: 'Квартира',
+  house: 'Дом',
+  bungalo: 'Бунгало'
+};
 var timeIn = ['12:00', '13:00', '14:00'];
 var timeOut = ['13:00', '14:00', '15:00'];
 var featuresArray = [
@@ -39,7 +39,10 @@ var FEATURES_ARRAY_LENGTH = 6;
 var INDEX = Math.floor(Math.random() * (3 - 1) + 1);
 
 function getAvatarNumber() {
-  return 'img/avatars/user' + avatarNumbersArray[i] + '.png';
+  var index = Math.floor(Math.random() * avatarNumbersArray.length);
+  var number = avatarNumbersArray[index];
+  avatarNumbersArray.splice(index, 1);
+  return 'img/avatars/user' + number + '.png';
 }
 function getTitle() {
   var index = Math.floor(Math.random() * titlesArray.length);
@@ -50,11 +53,14 @@ function getTitle() {
 function getRandom(max, min) {
   return Math.floor(Math.random() * (max - min) + min);
 }
-function getRandomFrom(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+function getRandomType() {
+  var type = Object.keys(HOUSE_TYPE);
+  var randomType = Math.floor(Math.random() * type.length);
+  return '' + type[randomType];
 }
 function getFeaturesLength(arr) {
-  var n = Math.floor(FEATURES_ARRAY_LENGTH * Math.random());
+  arr.length = FEATURES_ARRAY_LENGTH;
+  var n = Math.floor(FEATURES_ARRAY_LENGTH * Math.random() + 1);
   arr.length = n;
   return arr;
 }
@@ -68,8 +74,8 @@ function getRandomAd() {
   adTemplate.offer = {};
   adTemplate.offer.title = getTitle();
   adTemplate.offer.adress = adTemplate.location.x + ',' + adTemplate.location.y;
-  adTemplate.offer.price = getRandom(1000000, 1000);
-  adTemplate.offer.type = getRandomFrom(typesArray);
+  adTemplate.offer.price = getRandom(1000000, 1000).toLocaleString();
+  adTemplate.offer.type = getRandomType();
   adTemplate.offer.rooms = getRandom(5, 1);
   adTemplate.offer.guests = adTemplate.offer.rooms * 2;
   adTemplate.offer.checkin = timeIn[INDEX];
@@ -89,7 +95,8 @@ function createNewPin(offer) {
   var pin = document.createElement('div');
   var newImg = document.createElement('img');
   pin.className = 'pin';
-  pin.setAttribute('style', 'left: ' + offer.location.x + 'px; top: ' + offer.location.y + 'px');
+  pin.style.left = offer.location.x + 'px';
+  pin.style.top = offer.location.y + 'px';
   newImg.className = 'rounded';
   newImg.src = offer.author.avatar;
   newImg.width = 40;
@@ -97,7 +104,6 @@ function createNewPin(offer) {
   pin.appendChild(newImg);
   return pin;
 }
-
 function renderPins() {
   var pinsContainer = document.querySelector('.tokyo__pin-map');
   var fragment = document.createDocumentFragment();
@@ -115,13 +121,7 @@ adTemplateArray.forEach(function (item) {
   newCard.querySelector('.lodge__title').textContent = item.offer.title;
   newCard.querySelector('.lodge__address').textContent = item.offer.adress;
   newCard.querySelector('.lodge__price').textContent = item.offer.price + '/ночь';
-  if (item.offer.type === 'flat') {
-    newCard.querySelector('.lodge__type').textContent = 'Квартира';
-  } if (item.offer.type === 'house') {
-    newCard.querySelector('.lodge__type').textContent = 'Дом';
-  } else {
-    newCard.querySelector('.lodge__type').textContent = 'Бунгало';
-  }
+  newCard.querySelector('.lodge__type').textContent = HOUSE_TYPE[item.offer.type];
   newCard.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + item.offer.guests + ' гостей в ' + item.offer.rooms + ' комнатах';
   newCard.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + item.offer.checkin + ', выезд до ' + item.offer.checkout;
   item.offer.features.forEach(function (feature) {
