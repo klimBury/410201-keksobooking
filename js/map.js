@@ -37,6 +37,10 @@ var FEATURES_ARRAY = [
 var AD_TEMPLATE_AMOUNT = 8;
 var INDEX = Math.floor(Math.random() * (3 - 1) + 1);
 
+var pinMap = document.querySelector('.tokyo__pin-map');
+var dialogHidden = document.querySelector('.dialog');
+var closeIcon = dialogHidden.querySelector('.dialog__close');
+
 var adTemplateArray = [];
 var pinsToRendering = [];
 
@@ -50,18 +54,85 @@ adTemplateArray.forEach(function (offer) {
 
 renderPins(pinsToRendering);
 
-var dialog = document.querySelector('.dialog');
-var dialogPanel = document.querySelector('.dialog__panel');
+initListeners();
 
-function replaceOffer() {
-  dialog.replaceChild(renderOffer(adTemplateArray[0]), dialogPanel);
+function initListeners() {
+  pinMap.addEventListener('click', onPinClick);
+  pinMap.addEventListener('keydown', onPinKeydown);
+  closeIcon.addEventListener('click', onCloseButtonClick);
+  pinMap.addEventListener('keydown', onCloseButtonKeydown);
 }
-replaceOffer();
+
+function onPinClick(evt) {
+  var currentElement = evt.target;
+  var selectedPin;
+  var selectedImage;
+  var activePin = document.querySelector('.pin--active');
+
+  if (currentElement.classList.contains('pin__main') ||
+      currentElement.parentNode.classList.contains('pin__main')) {
+
+    return;
+  }
+
+  if (currentElement.classList.contains('pin')) {
+    selectedPin = currentElement;
+    selectedImage = currentElement.firstChild;
+  } else {
+    selectedImage = currentElement;
+    selectedPin = currentElement.parentNode;
+  }
+
+  var imagePath = selectedImage.getAttribute('src');
+  var offerObject = getOfferByImageSourcePath(imagePath);
+  var newOfferCard = createNewOfferCard(offerObject);
+
+  if (activePin) {
+    activePin.classList.remove('pin--active');
+  }
+
+  dialogHidden.classList.remove('hidden');
+  selectedPin.classList.add('pin--active');
+
+  renderOfferCard(newOfferCard);
+
+}
+
+function getOfferByImageSourcePath(path) {
+  // TODO. Переписать на find || every
+  for (var j = 0; j < adTemplateArray.length; j++) {
+
+    if (adTemplateArray[j].author.avatar === path) {
+
+      return adTemplateArray[j];
+    }
+  }
+}
+
+function onPinKeydown(evt) {
+  if (evt.keyCode === 13) {
+    onPinClick(evt);
+  }
+}
+
+function onCloseButtonClick() {
+  var activePin = document.querySelector('.pin--active');
+
+  dialogHidden.classList.add('hidden');
+  activePin.classList.remove('pin--active');
+}
+
+function onCloseButtonKeydown(evt) {
+  if (evt.keyCode === 27) {
+    onCloseButtonClick();
+  }
+}
 
 function getRandomArrayLength(array) {
 
   return Math.floor(Math.random() * array.length);
 }
+
 function getAvatarNumber() {
   var index = getRandomArrayLength(AVATAR_NUMBERS_ARRAY);
   var number = AVATAR_NUMBERS_ARRAY[index];
@@ -156,12 +227,12 @@ function renderPins(pins) {
 
   pinsContainer.appendChild(fragment);
 }
-var newCard = '';
-function renderOffer(item) {
+
+function createNewOfferCard(item) {
   document.getElementById('lodge-template').classList.remove('hidden');
 
   var cardTemplate = document.getElementById('lodge-template').content;
-  newCard = cardTemplate.querySelector('.dialog__panel').cloneNode(true);
+  var newCard = cardTemplate.querySelector('.dialog__panel').cloneNode(true);
   var dialogTitle = document.querySelector('.dialog__title');
 
   newCard.querySelector('.lodge__title').textContent = item.offer.title;
@@ -183,50 +254,14 @@ function renderOffer(item) {
   return newCard;
 }
 
-var pinMap = document.querySelector('.tokyo__pin-map');
-var offerPin = pinMap.querySelectorAll('.pin');
-var closeIcon = dialog.querySelector('.dialog__close');
+function renderOfferCard(newCard) {
 
-var openOffer = function (evt) {
-  var activePin = document.querySelector('.pin--active');
+  var dialog = document.querySelector('.dialog');
+  var dialogPanel = dialog.querySelector('.dialog__panel');
+  var newDocFragment = document.createDocumentFragment();
+  newDocFragment.appendChild(newCard);
 
-  if (activePin) {
-    activePin.classList.remove('pin--active');
-  }
-
-  dialog.classList.remove('hidden');
-  evt.target.classList.add('pin--active');
-  var pinNumber = evt.srcElement.currentSrc[evt.srcElement.currentSrc.length - 5];
-  var cPN = Number(pinNumber);
-
-  replaceOffer();
-};
-
-for (var j = 0; j < offerPin.length; j++) {
-  offerPin[j].addEventListener('click', openOffer);
+  dialog.replaceChild(newDocFragment, dialogPanel);
 }
-
-pinMap.addEventListener('keydown', function (evt) {
-
-  if (evt.keyCode === 13) {
-    openOffer(evt);
-  }
-});
-
-var closeOffer = function () {
-  var activePin = document.querySelector('.pin--active');
-
-  dialog.classList.add('hidden');
-  activePin.classList.remove('pin--active');
-};
-
-closeIcon.addEventListener('click', closeOffer);
-
-pinMap.addEventListener('keydown', function (evt) {
-
-  if (evt.keyCode === 27) {
-    closeOffer();
-  }
-});
 
 
