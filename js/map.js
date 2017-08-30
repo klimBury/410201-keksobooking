@@ -264,4 +264,3 @@ function renderOfferCard(newCard) {
   dialog.replaceChild(newDocFragment, dialogPanel);
 }
 
-
