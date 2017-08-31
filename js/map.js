@@ -107,6 +107,8 @@ function getOfferByImageSourcePath(path) {
       return adTemplateArray[j];
     }
   }
+
+  return adTemplateArray[j];
 }
 
 function onPinKeydown(evt) {
@@ -264,3 +266,57 @@ function renderOfferCard(newCard) {
   dialog.replaceChild(newDocFragment, dialogPanel);
 }
 
+function sync(el1, el2) {
+
+  if (!el1) {
+
+    return false;
+  } else {
+
+    var value = el1.value;
+    var syncWith = document.getElementById(el2);
+    var options = syncWith.getElementsByTagName('option');
+
+    for (var j = 0; j < options.length; j++) {
+
+      if (options[j].value === value) {
+        options[j].selected = true;
+      }
+    }
+  }
+
+  return options[i].selected;
+}
+
+var selectToSync = document.getElementById('room_number');
+selectToSync.onchange = function () {
+  sync(this, 'capacity');
+};
+
+var timeToSync = document.getElementById('timein');
+timeToSync.onchange = function () {
+  sync(this, 'timeout');
+};
+
+
+function getMinPrice(val) {
+
+  switch (val) {
+    case 'flat':
+      document.getElementById('price').value = 1000;
+      break;
+    case 'bungalo':
+      document.getElementById('price').value = 0;
+      break;
+    case 'house':
+      document.getElementById('price').value = 5000;
+      break;
+    case 'palace':
+      document.getElementById('price').value = 10000;
+      break;
+  }
+}
+
+document.getElementById('type').onchange = function () {
+  getMinPrice(this.options[this.selectedIndex].value);
+};
