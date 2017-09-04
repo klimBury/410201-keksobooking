@@ -83,5 +83,48 @@
     }
   }
 
+  var pinHandle = pinMap.querySelector('.rounded');
+  var divPinHandle = pinHandle.parentNode;
+  var tokyo = document.querySelector('.tokyo');
+
+  pinHandle.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+    var adress = document.getElementById('address');
+
+    var startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY
+      };
+
+      startCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY
+      };
+
+      divPinHandle.style.top = (divPinHandle.offsetTop - shift.y) + 'px';
+      divPinHandle.style.left = (divPinHandle.offsetLeft - shift.x) + 'px';
+
+      adress.value = 'x: ' + (-75 + startCoords.x) + ', y: ' + (0 + startCoords.y);
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      tokyo.removeEventListener('mousemove', onMouseMove);
+      tokyo.removeEventListener('mouseup', onMouseUp);
+    };
+
+    tokyo.addEventListener('mousemove', onMouseMove);
+    tokyo.addEventListener('mouseup', onMouseUp);
+  });
 
 })();
