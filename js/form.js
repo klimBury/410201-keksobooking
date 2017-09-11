@@ -2,55 +2,38 @@
 
 (function () {
 
-  function sync(el1, el2) {
+  var checkinTime = document.querySelector('#timein');
+  var checkoutTime = document.querySelector('#timeout');
 
-    if (!el1) {
+  var syncValues = function (element, value) {
+    element.value = value;
+  };
 
-      return false;
-    } else {
-
-      var value = el1.value;
-      var syncWith = document.getElementById(el2);
-      var options = syncWith.getElementsByTagName('option');
-
-      for (var j = 0; j < options.length; j++) {
-
-        if (options[j].value === value) {
-          options[j].selected = true;
-        }
-      }
-    }
-
-    return options.selected;
-  }
-
-  var selectToSync = document.getElementById('room_number');
+  var selectToSync = document.querySelector('#room_number');
   selectToSync.onchange = function () {
     sync(this, 'capacity');
   };
 
-  var selectCapacityToSync = document.getElementById('capacity');
+  var selectCapacityToSync = document.querySelector('#capacity');
   selectCapacityToSync.onchange = function () {
     sync(this, 'room_number');
   };
 
-  var timeToSync = document.getElementById('timein');
-  timeToSync.onchange = function () {
-    sync(this, 'timeout');
-  };
+  checkinTime.addEventListener('change', function (evt) {
+    window.synchronizeFields(evt.target, checkoutTime, window.data.time, window.data.time, syncValues);
+  });
 
-  var timeOutToSync = document.getElementById('timeout');
-  timeOutToSync.onchange = function () {
-    sync(this, 'timein');
-  };
+  checkoutTime.addEventListener('change', function (evt) {
+    window.synchronizeFields(evt.target, checkinTime, window.data.time, window.data.time, syncValues);
+  });
 
 
   function getMinPrice(val) {
 
     switch (val) {
       case 'flat':
-        document.getElementById('price').value = 1000;
-        document.getElementById('price').min = 1000;
+        document.querySelector('#price').value = 1000;
+        document.querySelector('#price').min = 1000;
         break;
       case 'bungalo':
         document.getElementById('price').value = 0;

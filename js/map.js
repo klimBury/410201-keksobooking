@@ -86,18 +86,18 @@
   var pinHandle = pinMap.querySelector('.rounded');
   var divPinHandle = pinHandle.parentNode;
   var tokyo = document.querySelector('.tokyo');
+  var adressElement = document.querySelector('#address');
 
   pinHandle.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
-    var adress = document.getElementById('address');
 
     var startCoords = {
       x: evt.clientX,
       y: evt.clientY
     };
 
-    var onMouseMove = function (moveEvt) {
+    function onMouseMove(moveEvt) {
       moveEvt.preventDefault();
 
       var shift = {
@@ -110,21 +110,60 @@
         y: moveEvt.clientY
       };
 
-      divPinHandle.style.top = (divPinHandle.offsetTop - shift.y) + 'px';
-      divPinHandle.style.left = (divPinHandle.offsetLeft - shift.x) + 'px';
+      var xCord = divPinHandle.offsetLeft - shift.x;
+      var yCord = divPinHandle.offsetTop - shift.y;
 
-      adress.value = 'x: ' + (-75 + startCoords.x) + ', y: ' + (0 + startCoords.y);
-    };
+      setMainPinPosition(divPinHandle, xCord, yCord);
 
-    var onMouseUp = function (upEvt) {
+      setAddressField(xCord, yCord);
+
+    }
+
+    function onMouseUp(upEvt) {
       upEvt.preventDefault();
 
       tokyo.removeEventListener('mousemove', onMouseMove);
       tokyo.removeEventListener('mouseup', onMouseUp);
-    };
+    }
 
     tokyo.addEventListener('mousemove', onMouseMove);
     tokyo.addEventListener('mouseup', onMouseUp);
   });
+
+  function setMainPinPosition(pinElement, x, y) {
+
+    var width = 75;
+
+    pinElement.style.top = y + 'px';
+    pinElement.style.left = x + 'px';
+
+    var maxMinCoords = {
+      minPositionX: Math.floor(width / 2),
+      maxPositionX: Math.floor(1200 - width / 2),
+      minPositionY: 80,
+      maxPositionY: 550
+    };
+
+    if (pinElement.offsetTop <= maxMinCoords.minPositionY) {
+      pinElement.style.top = maxMinCoords.minPositionY + 'px';
+    }
+
+    if (pinElement.offsetTop >= maxMinCoords.maxPositionY) {
+      pinElement.style.top = maxMinCoords.maxPositionY + 'px';
+    }
+
+    if (pinElement.offsetLeft <= maxMinCoords.minPositionX) {
+      pinElement.style.left = -width / 2 + 'px';
+    }
+
+    if (pinElement.offsetLeft >= maxMinCoords.maxPositionX) {
+      pinElement.style.left = maxMinCoords.maxPositionX + 'px';
+    }
+
+  }
+
+  function setAddressField(x, y) {
+    adressElement.value = 'x: ' + x + ', ' + 'y: ' + y;
+  }
 
 })();
