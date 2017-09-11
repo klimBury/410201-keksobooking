@@ -2,71 +2,31 @@
 
 (function () {
 
-  function sync(el1, el2) {
+  var checkinTime = document.querySelector('#timein');
+  var checkoutTime = document.querySelector('#timeout');
 
-    if (!el1) {
-
-      return false;
-    } else {
-
-      var value = el1.value;
-      var syncWith = document.getElementById(el2);
-      var options = syncWith.getElementsByTagName('option');
-
-      for (var j = 0; j < options.length; j++) {
-
-        if (options[j].value === value) {
-          options[j].selected = true;
-        }
-      }
-    }
-
-    return options.selected;
+  function syncValues(element, value) {
+    element.value = value;
   }
 
-  var selectToSync = document.getElementById('room_number');
-  selectToSync.onchange = function () {
-    sync(this, 'capacity');
-  };
+  checkinTime.addEventListener('change', function (evt) {
+    window.synchronizeFields(evt.target, checkoutTime, window.data.time, window.data.time, syncValues);
+  });
 
-  var selectCapacityToSync = document.getElementById('capacity');
-  selectCapacityToSync.onchange = function () {
-    sync(this, 'room_number');
-  };
+  checkoutTime.addEventListener('change', function (evt) {
+    window.synchronizeFields(evt.target, checkinTime, window.data.time, window.data.time, syncValues);
+  });
 
-  var timeToSync = document.getElementById('timein');
-  timeToSync.onchange = function () {
-    sync(this, 'timeout');
-  };
+  var apartmentType = document.querySelector('#type');
+  var pricePerNight = document.querySelector('#price');
 
-  var timeOutToSync = document.getElementById('timeout');
-  timeOutToSync.onchange = function () {
-    sync(this, 'timein');
-  };
-
-
-  function getMinPrice(val) {
-
-    switch (val) {
-      case 'flat':
-        document.getElementById('price').value = 1000;
-        document.getElementById('price').min = 1000;
-        break;
-      case 'bungalo':
-        document.getElementById('price').value = 0;
-        break;
-      case 'house':
-        document.getElementById('price').value = 5000;
-        document.getElementById('price').min = 5000;
-        break;
-      case 'palace':
-        document.getElementById('price').value = 10000;
-        document.getElementById('price').min = 10000;
-        break;
-    }
+  function syncValueWithMin(element, value) {
+    element.value = value;
+    element.min = value;
   }
 
-  document.getElementById('type').onchange = function () {
-    getMinPrice(this.options[this.selectedIndex].value);
-  };
+  apartmentType.addEventListener('change', function (evt) {
+    window.synchronizeFields(evt.target, pricePerNight, ['flat', 'bungalo', 'house', 'palace'], [1000, 0, 5000, 10000], syncValueWithMin);
+  });
+
 })();

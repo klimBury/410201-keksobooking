@@ -83,5 +83,84 @@
     }
   }
 
+  var pinHandle = pinMap.querySelector('.rounded');
+  var divPinHandle = pinHandle.parentNode;
+  var tokyo = document.querySelector('.tokyo');
+  var adressElement = document.querySelector('#address');
+
+  pinHandle.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+
+    var startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    function onMouseMove(moveEvt) {
+      moveEvt.preventDefault();
+
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY
+      };
+
+      startCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY
+      };
+
+      var xCord = divPinHandle.offsetLeft - shift.x;
+      var yCord = divPinHandle.offsetTop - shift.y;
+
+      setMainPinPosition(divPinHandle, xCord, yCord);
+
+      setAddressField(xCord, yCord);
+    }
+
+    function onMouseUp(upEvt) {
+      upEvt.preventDefault();
+
+      tokyo.removeEventListener('mousemove', onMouseMove);
+      tokyo.removeEventListener('mouseup', onMouseUp);
+    }
+
+    tokyo.addEventListener('mousemove', onMouseMove);
+    tokyo.addEventListener('mouseup', onMouseUp);
+  });
+
+  function setMainPinPosition(pinElement, x, y) {
+
+    pinElement.style.top = y + 'px';
+    pinElement.style.left = x + 'px';
+
+    var maxMinCoords = {
+      minPositionX: Math.floor(75 / 2),
+      maxPositionX: Math.floor(1200 - 75 / 2),
+      minPositionY: 80,
+      maxPositionY: 550
+    };
+
+    if (pinElement.offsetTop <= maxMinCoords.minPositionY) {
+      pinElement.style.top = maxMinCoords.minPositionY + 'px';
+    }
+
+    if (pinElement.offsetTop >= maxMinCoords.maxPositionY) {
+      pinElement.style.top = maxMinCoords.maxPositionY + 'px';
+    }
+
+    if (pinElement.offsetLeft <= maxMinCoords.minPositionX) {
+      pinElement.style.left = -75 / 2 + 'px';
+    }
+
+    if (pinElement.offsetLeft >= maxMinCoords.maxPositionX) {
+      pinElement.style.left = maxMinCoords.maxPositionX + 'px';
+    }
+
+  }
+
+  function setAddressField(x, y) {
+    adressElement.value = 'x: ' + x + ', ' + 'y: ' + y;
+  }
 
 })();

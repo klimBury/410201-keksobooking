@@ -27,8 +27,7 @@
     house: 'Дом',
     bungalo: 'Бунгало'
   };
-  var TIME_IN = ['12:00', '13:00', '14:00'];
-  var TIME_OUT = ['13:00', '14:00', '15:00'];
+  var TIME = ['12:00', '13:00', '14:00'];
   var FEATURES_ARRAY = [
     'wifi',
     'dishwasher',
@@ -38,7 +37,6 @@
     'conditioner'
   ];
   var AD_TEMPLATE_AMOUNT = 8;
-  var INDEX = Math.floor(Math.random() * (3 - 1) + 1);
   var adTemplateArray = [];
 
   for (var i = 0; i < AD_TEMPLATE_AMOUNT; i++) {
@@ -101,13 +99,13 @@
     adTemplate.location.y = getRandom(500, 300);
     adTemplate.offer = {};
     adTemplate.offer.title = getTitle();
-    adTemplate.offer.adress = adTemplate.location.x + ',' + adTemplate.location.y;
+    adTemplate.offer.adress = (adTemplate.location.x - 10) + ',' + (adTemplate.location.y - 15);
     adTemplate.offer.price = getRandom(1000000, 1000).toLocaleString();
     adTemplate.offer.type = getRandomType();
     adTemplate.offer.rooms = getRandom(5, 1);
     adTemplate.offer.guests = adTemplate.offer.rooms * 2;
-    adTemplate.offer.checkin = TIME_IN[INDEX];
-    adTemplate.offer.checkout = TIME_OUT[INDEX];
+    adTemplate.offer.checkin = TIME[getRandom(3, 0)];
+    adTemplate.offer.checkout = adTemplate.offer.checkin;
     adTemplate.offer.features = newFeatures;
     adTemplate.offer.description = '';
     adTemplate.offer.photos = [];
@@ -116,12 +114,15 @@
   }
 
   window.data = {
+
+    time: TIME,
+
     adTemplateArrayObj: adTemplateArray,
 
     createNewOfferCard: function (item) {
-      document.getElementById('lodge-template').classList.remove('hidden');
+      document.querySelector('#lodge-template').classList.remove('hidden');
 
-      var cardTemplate = document.getElementById('lodge-template').content;
+      var cardTemplate = document.querySelector('#lodge-template').content;
       var newCard = cardTemplate.querySelector('.dialog__panel').cloneNode(true);
       var dialogTitle = document.querySelector('.dialog__title');
 
